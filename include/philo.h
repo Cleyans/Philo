@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: brclemen <brclemen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/20 17:59:47 by brclemen          #+#    #+#             */
-/*   Updated: 2024/04/02 14:37:08 by brclemen         ###   ########.fr       */
+/*   Created: 2024/04/08 20:08:45 by brclemen          #+#    #+#             */
+/*   Updated: 2024/04/08 20:12:19 by brclemen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,78 +14,72 @@
 # define PHILO_H
 
 /*
-*****************************************************
-*                       INCLUDE                     *
-*****************************************************
+**************************************************************
+*                         *INCLUDE*                          *
+**************************************************************
 */
 
-# include <pthread.h>
-# include <unistd.h>
-# include <fcntl.h>
-# include <sys/stat.h>
-# include <semaphore.h>
 # include <stdio.h>
-# include <sys/time.h>
 # include <stdlib.h>
-
+# include <limits.h>
+# include <string.h>
+# include <sys/time.h>
+# include <pthread.h>
+# include <stdarg.h>
 
 /*
-*****************************************************
-*                       STRUCT                      *
-*****************************************************
+**************************************************************
+*                         *STRUCT*                           *
+**************************************************************
 */
 
-typedef struct t_info
+typedef struct s_philo
 {
-	int					p_id;
-	int					philo_nb;
-	int					die_time;
-	int					eat_time;
-	int					sleep_time;
-	int					count_eating;
-}						t_info;
-
-typedef struct t_count
-{
-	int					count_mutex;
-	int					count_thread;
-	int					index_mutex;
-	long long 			current;
-	long int 			start;
-}						t_count;
-
-typedef struct t_philo
-{
-	struct timeval		current_time;
-	t_count					count;
-	t_info					info;
-	pthread_mutex_t			*fork;
-	pthread_t				*philo_t;
-	
+	int					id;
+	int					last_meal;
+	int					is_eating;
+	int					time_to_die;
+	int					time_to_sleep;
+	int					time_to_eat;
+	int					number_of_meals;
+	pthread_t			thread_id;
+	pthread_mutex_t		*left_fork;
+	pthread_mutex_t		*right_fork;
+	struct s_general	*general;
 }						t_philo;
 
+typedef struct s_prog
+{
+	int						number_of_philosophers;
+	int						time_to_die;
+	int						time_to_sleep;
+	int						time_to_eat;
+	int						number_of_meals;
+	int						number_to_eat;
+	int						start_time;
+	int						philosopher_dead;
+	pthread_mutex_t			*fork_mutex;
+	pthread_mutex_t			mutex;
+	pthread_mutex_t			*left_fork;
+	pthread_mutex_t			*right_fork;
+	t_philo					*philosophers;
+}						t_prog;
+
 /*
-*****************************************************
-*                      FONCTIONS                    *
-*****************************************************
+**************************************************************
+*                         *FONCTIONS*                        *
+**************************************************************
 */
 
-//	ROUTINE //
-
-void	sleeping(t_philo philo);
-void	eating(t_philo philo);
-void	thinking(t_philo philo);
-
-// PHILO //
-
-void	init_philo_needs(char *av[], t_philo *philo);
-void	print_philo(t_philo philo);
-void	*routine(t_philo *philo);
-void	creating_thread_and_mutex(t_philo *philo);
-int		atoi_philo(char *str);
-int		verif_ascii(char *av[]);
+void	ft_thread_create(t_prog *prog);
+void	ft_mutex_create(t_prog *prog);
+void	*routine(void *arguments);
+void	test_printf(const char *format, ...);
+int		get_time(void);
+int		ft_init(int argc, char **argv, t_prog *prog);
+int		init_philo(t_prog *prog);
 int		verif_errors(char *av[]);
-long long	get_time(void);
-void	ft_usleep(int ms);
+int		verif_ascii(char *av[]);
+int		atoi_philo(char *str);
 
 #endif
